@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/shivashankar-dev-dot/gin-backend/models"
@@ -47,12 +48,32 @@ func createTodo(c *gin.Context) {
 	})
 }
 
+func getTodo(c *gin.Context) {
+	var id, _ = strconv.Atoi(c.Param("id"))
+
+	fmt.Println("Ckhjh")
+
+	for _, todo := range todos {
+		if int(todo.ID) == id {
+			c.JSON(http.StatusOK, gin.H{
+				"todo": todo,
+			})
+			return
+		}
+	}
+
+	c.JSON(http.StatusNotFound, gin.H{
+		"Not Found": "Todo not found",
+	})
+}
+
 func main() {
 
 	r := gin.Default()
 
 	r.GET("/todos", getTodos)
 	r.POST("/todos", createTodo)
+	r.GET("/todos/:id", getTodo)
 
 	r.Run(":8000")
 }
